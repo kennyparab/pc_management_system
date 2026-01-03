@@ -78,7 +78,7 @@ async function createTables() {
 }
 
 // Initialize database on server start
-createTables();
+
 
 // ==================== USERS ROUTES ====================
 
@@ -324,8 +324,19 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+
 // Start server
-app.listen(port,'0.0.0.0', () => {
-    console.log(`Server running on http://localhost:${port}`);
-    console.log('Database tables will be created automatically');
-});
+async function startServer() {
+    try {
+        await createTables();
+
+        app.listen(port, () => {
+            console.log(`Server is running on port ${port}`);
+        });
+    } catch (err) {
+        console.error('Failed to start server:', err);
+        process.exit(1);
+    }
+}
+
+startServer();
