@@ -1,4 +1,5 @@
-require('dotenv').config();
+
+const dotenv = require('dotenv');
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
@@ -6,6 +7,7 @@ const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 3000;
+dotenv.config();
 
 // Middleware
 app.use(cors());
@@ -339,7 +341,7 @@ async function startServer() {
         console.log('✅ Schema check complete');
 
         // Explicitly bind to 0.0.0.0 (required by many container providers)
-        const server = app.listen(port, '0.0.0.0', () => {
+        const server = app.listen(port, () => {
             console.log(`🚀 SERVER IS FULLY LIVE`);
             console.log(`📡 Listening on: http://0.0.0.0:${port}`);
         });
@@ -356,4 +358,7 @@ async function startServer() {
         setTimeout(() => process.exit(1), 5000);
     }
 }
+setInterval(() => {
+    console.log('💓 Heartbeat: Server is still active at ' + new Date().toISOString());
+}, 30000);
 startServer();
