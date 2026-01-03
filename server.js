@@ -325,7 +325,7 @@ app.get('/', (req, res) => {
 });
 
 // Start server
-app.listen(port, () => {
+app.listen(port,'0.0.0.0', () => {
     console.log(`Server running on http://localhost:${port}`);
     console.log('Database tables will be created automatically');
 });
