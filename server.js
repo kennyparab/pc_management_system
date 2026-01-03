@@ -5,12 +5,12 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT ;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
-
+app.use(express.static('public'));
 
 // Use DATABASE_URL
 const pool = new Pool({
