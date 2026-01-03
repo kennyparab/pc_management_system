@@ -334,31 +334,29 @@ async function startServer() {
         
         // Test DB connection before trying to create tables
         const client = await pool.connect();
-        console.log('✅ Connected to Database');
+        console.log(' Connected to Database');
         client.release();
 
         await createTables();
-        console.log('✅ Schema check complete');
+        console.log(' Schema check complete');
 
         // Explicitly bind to 0.0.0.0 (required by many container providers)
         const server = app.listen(port, () => {
-            console.log(`🚀 SERVER IS FULLY LIVE`);
-            console.log(`📡 Listening on: http://0.0.0.0:${port}`);
+            console.log(` SERVER IS FULLY LIVE`);
+            
         });
 
         // This prevents the process from exiting if a request fails
         server.on('error', (err) => {
-            console.error('❌ SERVER ERROR:', err);
+            console.error(' SERVER ERROR:', err);
         });
 
     } catch (err) {
-        console.error('❌ FATAL STARTUP ERROR:', err.message);
+        console.error(' FATAL STARTUP ERROR:', err.message);
         console.error(err.stack);
         // Delay exit so you can actually read the log in the container console
         setTimeout(() => process.exit(1), 5000);
     }
 }
-setInterval(() => {
-    console.log('💓 Heartbeat: Server is still active at ' + new Date().toISOString());
-}, 30000);
+
 startServer();
