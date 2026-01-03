@@ -5,7 +5,7 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
-const port = process.env.PORT ;
+const port = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
@@ -328,15 +328,32 @@ app.get('/', (req, res) => {
 // Start server
 async function startServer() {
     try {
-        await createTables();
+        console.log('--- System Startup ---');
+        
+        // Test DB connection before trying to create tables
+        const client = await pool.connect();
+        console.log('✅ Connected to Database');
+        client.release();
 
-        app.listen(port, () => {
-            console.log(`Server is running on port ${port}`);
+        await createTables();
+        console.log('✅ Schema check complete');
+
+        // Explicitly bind to 0.0.0.0 (required by many container providers)
+        const server = app.listen(port, '0.0.0.0', () => {
+            console.log(`🚀 SERVER IS FULLY LIVE`);
+            console.log(`📡 Listening on: http://0.0.0.0:${port}`);
         });
+
+        // This prevents the process from exiting if a request fails
+        server.on('error', (err) => {
+            console.error('❌ SERVER ERROR:', err);
+        });
+
     } catch (err) {
-        console.error('Failed to start server:', err);
-        process.exit(1);
+        console.error('❌ FATAL STARTUP ERROR:', err.message);
+        console.error(err.stack);
+        // Delay exit so you can actually read the log in the container console
+        setTimeout(() => process.exit(1), 5000);
     }
 }
-
 startServer();
